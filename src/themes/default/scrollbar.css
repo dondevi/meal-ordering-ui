@@ -1,0 +1,38 @@
+/**
+ * =============================================================================
+ *  Scrollbar
+ * =============================================================================
+ *
+ * @author dondevi
+ * @create 2017-08-25
+ */
+
+::selection {
+  background: #f96868;
+  color: white;
+  text-shadow: none;
+}
+::-moz-selection {
+  background: #f96868;
+  color: white;
+  text-shadow: none;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: #ddd;
+  background-color: rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 8px;
+}
+:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.16);
+}
+::-webkit-scrollbar-corner {
+  display: none;
+}

@@ -1,0 +1,18 @@
+{
+  "name": "meal-ordering",
+  "author": "dondevi",
+  "version": "0.2.0",
+  "license": "ISC",
+  "private": true,
+  "description": "Meal ordering system.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dondevi/meal-ordering-ui"
+  },
+  "keywords": [],
+  "scripts": {
+    "init": "npm link vue & npm link vue-router & npm link element-ui & npm link normalize.css & npm link axios",
+    "dev": "cooking watch -p",
+    "dist": "cooking build -p"
+  }
+}

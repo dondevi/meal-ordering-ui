@@ -1,0 +1,12 @@
+[
+  {"id":"1","gname":"管理员","gorder":"188","gzt":"y","gxianshi":"显示"},
+  {"id":"5","gname":"其他","gorder":"380","gzt":"y","gxianshi":"隐藏"},
+  {"id":"6","gname":"A部门","gorder":"18","gzt":"y","gxianshi":"隐藏"},
+  {"id":"9","gname":"B部门","gorder":"100","gzt":"y","gxianshi":"显示"},
+  {"id":"11","gname":"C部门","gorder":"96","gzt":"y","gxianshi":"隐藏"},
+  {"id":"16","gname":"D部门","gorder":"1","gzt":"y","gxianshi":"显示"},
+  {"id":"17","gname":"E部门","gorder":"110","gzt":"y","gxianshi":"隐藏"},
+  {"id":"20","gname":"F部门","gorder":"5","gzt":"y","gxianshi":"隐藏"},
+  {"id":"21","gname":"G部门","gorder":"28","gzt":"y","gxianshi":"隐藏"},
+  {"id":"22","gname":"H部门","gorder":"3","gzt":"y","gxianshi":"显示"}
+]
