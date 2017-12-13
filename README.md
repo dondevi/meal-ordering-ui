@@ -10,7 +10,7 @@
 
 ## Example
 
-<https://github.com/dondevi/meal-ordering-ui/dist/?mock>
+<https://dondevi.github.io/meal-ordering-ui/dist/?mock>
 
 
 ## Develop

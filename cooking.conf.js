@@ -20,9 +20,9 @@ cooking.set({
   entry: "./src/main.js",
   template: "./src/index.html",
 
-  dist: "./dist",
-  publicPath: "/",
-  assetsPath: "static",
+  dist: "dist",
+  publicPath: "./",
+  assetsPath: "./static",
 
   hash: true,
   chunk: true,
