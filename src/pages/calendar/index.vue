@@ -301,6 +301,7 @@
   }
     .calendar-view td {
       padding: 0;
+      vertical-align: top;
     }
     .calendar-view td.now time {
       font-weight: bold;
@@ -343,6 +344,7 @@
   }
   .cell-content > .el-checkbox-button {
     flex-grow: 1;
+    width: 50%;
     height: 100%;
   }
 
