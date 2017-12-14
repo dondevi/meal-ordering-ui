@@ -8,6 +8,14 @@
 # Meal ordering System UI
 
 
+## Compare
+
+- Before
+<img src="./before.png" height="150">
+- After
+<img src="./after.png" height="150">
+
+
 ## Example
 
 <https://dondevi.github.io/meal-ordering-ui/dist/?mock>
