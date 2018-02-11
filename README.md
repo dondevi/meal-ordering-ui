@@ -17,7 +17,7 @@
 <img src="./after.png" height="150">
 
 
-## Example
+## Demo
 
 <https://dondevi.github.io/meal-ordering-ui/dist/?mock>
 
