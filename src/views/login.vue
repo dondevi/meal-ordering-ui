@@ -38,7 +38,7 @@
 
 
 <script>
-  import { SERVICE_login } from "service";
+  import { login as SERVICE_login } from "service";
   export default {
     data: () => ({
       form: {
