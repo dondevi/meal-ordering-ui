@@ -1,26 +1,17 @@
 <!--
 /**
  * =============================================================================
- *  Calendar 日历视图
+ *  Calendar
  * =============================================================================
  *
  * @author dondevi
- * @create 2017-08-24
- *
- * @update 2017-08-25 dondevi
- *   1.Develop
- * @update 2017-08-30 dondevi
- *   1.Impletement
- * @update 2017-09-30 dondevi
- *   1.Update: Theme !
- *   2.Remove: <el-tooltip>
+ * @create 2018-06-24
  */
 -->
 
 <template>
-  <div class="content flex unselect">
-
-    <table class="calendar-view" :class="{ loading: loading }">
+  <q-page class="row non-selectable" @keypress="doShortcut">
+    <table class="col calendar-view" :class="{ loading: loading }">
 
       <thead>
         <tr>
@@ -39,14 +30,14 @@
                 <time v-text="filterDay(day.value)"></time>
               </div>
               <div class="cell-content" v-if="!day.isDisable">
-                <el-checkbox-button
+                <label
                   v-for="(groups, type) in day.meta"
                   v-if="!/^__/.test(type)"
-                  :key="type"
-                  :label="type"
-                  :checked="!!groups.__orderId"
-                  @change="setOrder(groups.__orderId, day.text, type)">
-                </el-checkbox-button>
+                  :class="{ 'is-checked': groups.__orderId }">
+                  <input type="checkbox" :checked="groups.__orderId"
+                    @change="setOrder(groups.__orderId, day.text, type)" hidden />
+                  {{ { "lunch": "午餐", "dinner": "晚餐" }[type] }}
+                </label>
               </div>
             </div>
 
@@ -55,56 +46,52 @@
       </tbody>
     </table>
 
-    <div class="calendar-panel">
+    <q-layout-drawer side="right" v-model="drawer" :content-style="{width:'340px'}">
+      <div class="calendar-panel">
 
-      <header class="calendar-panel-header">
-        <el-tooltip effect="light" content="上月" placement="bottom">
-          <el-button size="small" icon="el-icon-d-arrow-left"
-            @click="setDate('month', -1)"></el-button>
-        </el-tooltip>
-        <el-tooltip effect="light" content="上天" placement="bottom">
-          <el-button size="small" icon="el-icon-arrow-left"
-            @click="setDate('day', -1)"></el-button>
-        </el-tooltip>
-        <el-tooltip effect="light" content="回今" placement="bottom">
-          <el-button size="small" @click="setDate('today')">
+        <header class="calendar-panel-header">
+          <q-btn size="small" icon="first_page" @click="setDate('month', -1)">
+            <q-tooltip>上月</q-tooltip>
+          </q-btn>
+          <q-btn size="small" icon="chevron_left" @click="setDate('day', -1)">
+            <q-tooltip>上天</q-tooltip>
+          </q-btn>
+          <q-btn size="small" @click="setDate('today')">
             <strong> {{ activeDate }} </strong>
-          </el-button>
-        </el-tooltip>
-        <el-tooltip effect="light" content="下天" placement="bottom">
-          <el-button size="small" icon="el-icon-arrow-right"
-            @click="setDate('day', 1)"></el-button>
-        </el-tooltip>
-        <el-tooltip effect="light" content="下月" placement="bottom">
-          <el-button size="small" icon="el-icon-d-arrow-right"
-            @click="setDate('month', 1)"></el-button>
-        </el-tooltip>
-      </header>
+            <q-tooltip>回今</q-tooltip>
+          </q-btn>
+          <q-btn size="small" icon="chevron_right" @click="setDate('day', 1)">
+            <q-tooltip>下天</q-tooltip>
+          </q-btn>
+          <q-btn size="small" icon="last_page" @click="setDate('month', 1)">
+            <q-tooltip>下月</q-tooltip>
+          </q-btn>
+        </header>
 
-      <div class="calendar-panel-body">
-        <div v-for="(groups, type) in nowMeta" v-if="!/^__/.test(type)">
-          <header> {{ type }}
-            <template v-if="groups.__count">
-              <small>x</small> {{ groups.__count }}
-            </template>
-          </header>
-          <dl class="staff-list" v-for="(orders, group) in groups" v-if="!/^__/.test(group)">
-            <dt> {{ group }}
-              <template>
-                <small>x</small> {{ orders.length }}
+        <div class="calendar-panel-body">
+          <div v-for="(groups, type) in nowMeta" v-if="!/^__/.test(type)">
+            <header> {{ { "lunch": "午餐", "dinner": "晚餐" }[type] }}
+              <template v-if="groups.__count">
+                <small>x</small> {{ groups.__count }}
               </template>
-            </dt>
-            <dd v-for="order in orders"
-                :class="{ active: order.dstaff === groups.__userName }">
-              {{ order.dstaff }}
-            </dd>
-          </dl>
+            </header>
+            <dl class="staff-list" v-for="(orders, group) in groups" v-if="!/^__/.test(group)">
+              <dt> {{ group }}
+                <template>
+                  <small>x</small> {{ orders.length }}
+                </template>
+              </dt>
+              <dd v-for="order in orders"
+                  :class="{ active: order.member_name === groups.__userName }">
+                {{ order.member_name }}
+              </dd>
+            </dl>
+          </div>
         </div>
       </div>
+    </q-layout-drawer>
 
-    </div>
-
-  </div>
+  </q-page>
 </template>
 
 
@@ -112,18 +99,21 @@
 
 
 <script>
+  import { date } from "quasar";
   import "pages/mixin.css";
   import mixin from "pages/mixin.js";
-  export default {
-    mixins: [mixin],
 
+  export default {
+
+    mixins: [mixin],
     data: () => ({
+      drawer: true,
       weekdays: [],
       calendar: [],
       activeItem: {
-        text: new Date().format(),
+        text: date.formatDate(new Date(), "YYYY-MM-DD"),
       },
-      minDate: new Date().format(),
+      minDate: date.formatDate(new Date(), "YYYY-MM-DD"),
       startDate: "",
       endDate: "",
       nowMeta: {},
@@ -154,7 +144,7 @@
         this.calendar.forEach(week => {
           week.forEach(day => {
             var meta = Object.assign({
-              "午餐": {}, "晚餐": {}
+              "lunch": {}, "dinner": {}
             }, this.orderList[day.text]);
             Object.assign(day, { meta });
             if (day.isActive) {
@@ -166,24 +156,28 @@
     },
 
     created () {
-      this.weekdays = this.getWeekdays();
+      this.initWeekdays();
+      window.addEventListener("keydown", this.doShortcut);
+    },
+    destroyed () {
+      window.removeEventListener("keydown", this.doShortcut);
     },
 
     methods: {
-      getWeekdays () {
+      initWeekdays () {
         // Array: 7 weekdays for showing 1 week
-        return new Array(7).fill(undefined).map((day, index) => ({
+        this.weekdays = new Array(7).fill(undefined).map((day, index) => ({
           value: index
         }));
       },
       getCalendar (viewDate, activeDate, minDate, maxDate) {
         viewDate = viewDate || activeDate;
         var workDateObj = getWorkDateObj(viewDate);
-        var nowDate = new Date().format();
+        var nowDate = date.formatDate(new Date(), "YYYY-MM-DD");
         var calendar = new Array(6).fill(undefined).map(week =>
           // 2D Array: 6 weeks x 7 days for showing 1 month
           new Array(7).fill(undefined).map(day => {
-            var workDate = workDateObj.format();
+            var workDate = date.formatDate(workDateObj, "YYYY-MM-DD");
             var offsetMonth = 7;
             var offsetDay = 10;
             day = {
@@ -210,7 +204,7 @@
         );
         workDateObj.setDate(workDateObj.getDate() - 1);
         this.startDate = nowDate;
-        this.endDate = workDateObj.format();
+        this.endDate = date.formatDate(workDateObj, "YYYY-MM-DD");
         return calendar;
       },
       getItemClass: item => ({
@@ -226,7 +220,7 @@
         item.isActive = true;
       },
       filterWeekday (value) {
-        var labels = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+        var labels = ["日", "一", "二", "三", "四", "五", "六"];
         return labels[value] || value;
       },
       filterDay (value) {
@@ -245,7 +239,7 @@
             activeDateObj.setDate(activeDateObj.getDate() + offset);
             break;
         }
-        var activeDate = activeDateObj.format();
+        var activeDate = date.formatDate(activeDateObj, "YYYY-MM-DD");
         var activeItem = null;
         this.calendar.forEach(week => {
           week.forEach(day => {
@@ -260,7 +254,17 @@
           this.activeItem = { text: activeDate };
         }
       },
-    }
+      doShortcut (event) {
+        switch (event.key) {
+          case "ArrowLeft": this.setDate('day', -1); break;
+          case "ArrowRight": this.setDate('day', 1); break;
+          case "ArrowUp": this.setDate('day', -7); break;
+          case "ArrowDown": this.setDate('day', 7); break;
+          case "PageUp": this.setDate('month', -1); break;
+          case "PageDown": this.setDate('month', 1); break;
+        };
+      },
+    },
   };
 
   function getWorkDateObj (viewDate) {
@@ -278,11 +282,12 @@
 
 
 <style scoped>
-
+  .q-layout-page {
+    height: calc(100vh - 53px);
+  }
   .calendar-view {
-    table-layout: fixed;
-    width: calc(100% - 340px);
     height: 100%;
+    table-layout: fixed;
     background-color: #ddd;
     border-collapse: separate;
     border-spacing: 1px;
@@ -323,10 +328,15 @@
       color: #888;
     }
     .calendar-view td.active {
-      outline: 1px solid #20a0ff;
+      outline: 1px solid #027be3;
     }
     .calendar-view td.active .cell-title {
+      color: #027be3;
       font-weight: bold;
+    }
+    .calendar-view td.now .cell-title {
+      background-color: #027be3;
+      color: #fff;
     }
 
   .cell {
@@ -342,7 +352,7 @@
     display: flex;
     height: 100%;
   }
-  .cell-content > .el-checkbox-button {
+  .cell-content > label {
     flex-grow: 1;
     width: 50%;
     height: 100%;
@@ -351,15 +361,14 @@
   .calendar-panel {
     display: flex;
     flex-direction: column;
-    width: 340px;
     height: 100%;
-    margin-left: -1px;
-    background: linear-gradient(to bottom, #20a0ff, #324057);
+    background: linear-gradient(to bottom, #027be3, #324057);
+    color: #fff;
   }
   .calendar-panel-header {
     display: flex;
     justify-content: center;
-    padding: 22px 0 20px;
+    padding: 20px 0;
   }
   .calendar-panel-body {
     display: flex;
@@ -386,50 +395,49 @@
     text-align: center;
   }
 
-  .cell-content >>>.el-checkbox-button__inner {
+  .cell-content > label {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
     width: 100%;
     height: 100%;
-    background-color: transparent;
-    border: none !important;
-    border-radius: 0 !important;
     vertical-align: middle;
+    cursor: pointer;
   }
-  .cell-content >>>.el-checkbox-button__inner:before {
-    content: "\E611";
+  .cell-content > label:before {
+    content: "done";
     display: block;
     width: 22px;
     height: 22px;
     margin-bottom: 5px;
-    background-color: #ededed;
+    background-color: #f5f5f5;
     border-radius: 50%;
     color: transparent;
+    font-family: "Material Icons";
     font-size: 10px;
-    font-family: element-icons;
     line-height: 22px;
   }
-  .cell-content >>>.is-checked .el-checkbox-button__inner {
+  .cell-content > label.is-checked:before {
     background-color: transparent;
     box-shadow: none;
   }
-  .cell-content >>>.is-checked .el-checkbox-button__inner:before {
-    background-color: #20a0ff;
+  .cell-content > label.is-checked:before {
+    background-color: #027be3;
     color: #fff;
   }
 
-  .calendar-panel-header > .el-button,
+  .calendar-panel-header > .q-btn,
   .calendar-panel-body > div > header {
     background-color: rgba(255,255,255,0.1);
     border: none;
+    box-shadow: none;
     color: #fff;
   }
   .calendar-view td .cell-title:hover     { background-color: #fbfbfb; }
   .calendar-view td.out .cell-title:hover { background-color: #fafafa; }
-  .cell-content >>>.el-checkbox-button__inner                   { color: rgba(0,0,0,0) !important; }
-  .cell-content >>>.el-checkbox-button__inner:hover             { color: rgba(0,0,0,0.7) !important; background-color: #fcfcfc; }
-  .cell-content >>>.is-checked .el-checkbox-button__inner:hover { color: rgba(0,0,0,0.4) !important; }
+  .cell-content > label                   { color: rgba(0,0,0,0) !important; }
+  .cell-content > label:hover             { color: rgba(0,0,0,0.7) !important; background-color: #fcfcfc; }
+  .cell-content > label.is-checked:hover  { color: rgba(0,0,0,0.4) !important; }
 </style>
 

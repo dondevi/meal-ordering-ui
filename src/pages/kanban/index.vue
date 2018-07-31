@@ -15,25 +15,28 @@
 -->
 
 <template>
-  <div class="table-wrap unselect" :class="{ loading: loading }">
-    <table class="table">
+  <q-page class="row non-selectable">
+
+    <table class="col table" :class="{ loading: loading }">
       <thead>
         <tr>
           <th colspan="2" v-for="day in dayList">
-            {{ day.text }} {{ day.weekDay }}
+            {{ day.weekDay }}
             <template v-if="day.meta">
               <small>x</small> {{ day.meta.__count }}
             </template>
+            <q-tooltip>{{ day.text }}</q-tooltip>
           </th>
         </tr>
         <tr>
           <template v-for="day in dayList">
             <th v-for="(groups, type) in day.meta" v-if="!/^__/.test(type)">
-              {{ type }} <small>x</small> {{ groups.__count }}
+              {{ { 'lunch': '午餐', 'dinner': '晚餐' }[type] }}
+              <small>x</small> {{ groups.__count }}
             </th>
           </template>
         </tr>
-        <tr>
+        <!-- <tr>
           <template v-for="day in dayList">
             <th v-for="(groups, type) in day.meta" v-if="!/^__/.test(type)">
               <el-button type="success" :plain="true" size="mini" icon="edit" v-if="!groups.__orderId"
@@ -42,7 +45,7 @@
                 @click.native="setOrder(groups.__orderId, day.text, type)">取消</el-button>
             </th>
           </template>
-        </tr>
+        </tr> -->
       </thead>
       <tbody>
         <tr>
@@ -53,8 +56,8 @@
                   {{ group }} <small>x</small> {{ orders.length }}
                 </dt>
                 <dd v-for="order in orders"
-                    :class="{ active: order.dstaff === groups.__userName }">
-                  {{ order.dstaff }}
+                    :class="{ active: order.member_name === groups.__userName }">
+                  {{ order.member_name }}
                 </dd>
               </dl>
             </td>
@@ -62,7 +65,8 @@
         </tr>
       </tbody>
     </table>
-  </div>
+
+  </q-page>
 </template>
 
 
@@ -70,6 +74,7 @@
 
 
 <script>
+  import { date } from "quasar";
   import "pages/mixin.css";
   import mixin from "pages/mixin.js";
 
@@ -88,7 +93,7 @@
       orderList () {
         this.dayList.forEach(day => {
           var meta = Object.assign({
-            "午餐": { __count: 0 }, "晚餐": { __count: 0 }, __count: 0,
+            "lunch": { __count: 0 }, "dinner": { __count: 0 }, __count: 0,
           }, this.orderList[day.text]);
           Object.assign(day, { meta });
           if (day.isActive) {
@@ -102,14 +107,14 @@
     },
     methods: {
       getDayList () {
-        var date = new Date();
+        var now = new Date();
         var labels = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-        date.setDate(date.getDate() - 1);
+        now.setDate(now.getDate() - 1);
         var dayList =  new Array(this.dayNum).fill(undefined).map(item => {
-          date.setDate(date.getDate() + 1);
+          now.setDate(now.getDate() + 1);
           return {
-            text: date.format(),
-            weekDay: labels[date.getDay()],
+            text: date.formatDate(now, "YYYY-MM-DD"),
+            weekDay: labels[now.getDay()],
           };
         });
         this.startDate = dayList[0].text;
@@ -125,19 +130,17 @@
 
 
 <style scoped>
-  .table-wrap {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background: linear-gradient(to bottom, #20a0ff, #324057);
-    color: #fff;
+  .q-layout-page {
+    height: calc(100vh - 53px);
   }
   .table {
     table-layout: fixed;
-    min-width: 100%;
-    min-height: calc(100% - 2px);
+    height: 100%;
+    margin-bottom: -1px;
+    background: linear-gradient(to bottom, #027be3, #324057);
+    color: #fff;
   }
-  .el-button {
+  .q-btn {
     border: none;
     background-color: rgba(255,255,255,0.1);
     color: #fff;

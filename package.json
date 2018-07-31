@@ -1,18 +1,30 @@
 {
-  "name": "meal-ordering",
-  "author": "dondevi",
-  "version": "0.2.0",
-  "license": "ISC",
+  "name": "xfoa-meal",
+  "version": "1.0.0",
+  "description": "Meal Ordering UI.",
+  "productName": "XFOA Meal",
+  "cordovaId": "org.cordova.xfoa.meal",
+  "author": "董经伟",
   "private": true,
-  "description": "Meal ordering system.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dondevi/meal-ordering-ui"
-  },
-  "keywords": [],
   "scripts": {
-    "init": "npm link vue & npm link vue-router & npm link element-ui & npm link normalize.css & npm link axios",
-    "dev": "cooking watch -p",
-    "dist": "cooking build -p"
-  }
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "vuelidate": "^0.7.4"
+  },
+  "devDependencies": {
+    "quasar-cli": "^0.16.0"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.6.0",
+    "yarn": ">= 1.6.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
 }
